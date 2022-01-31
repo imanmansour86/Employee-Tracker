@@ -1,0 +1,23 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imanmansour86/Employee-Tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imanmansour86/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/imanmansour86/Employee-Tracker#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "inquirer": "^8.2.0"
+  }
+}
