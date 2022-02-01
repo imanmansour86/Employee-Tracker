@@ -1,10 +1,4 @@
 const inquirer = require("inquirer");
-// Import and require mysql2
-const mysql = require("mysql2");
-const cTable = require("console.table");
-
-const PORT = process.env.PORT || 3001;
-
 const mainMenuQuestions = [
   {
     type: "list",
@@ -22,24 +16,6 @@ const mainMenuQuestions = [
     ],
   },
 ];
-
-// Connect to database
-const db = mysql.createConnection(
-  {
-    host: "127.0.0.1",
-    // MySQL username,
-    user: "root",
-    // MySQL password
-    password: "",
-    database: "empoloyeeTracker",
-  },
-  console.log(`Connected to the empoloyeeTracker database.`)
-);
-
-//if mysql connection fails
-db.connect(function (err) {
-  if (err) throw err;
-});
 
 function mainMenu() {
   inquirer.prompt(mainMenuQuestions).then((response) => {
@@ -70,16 +46,13 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-  db.query(
-    "SELECT * FROM employee_role INNER JOIN department ON department.id = employee_role.department_id ",
-    (err, results) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.table(results);
-      }
+  db.query("SELECT * FROM employee_role", (err, results) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.table(results);
     }
-  );
+  });
 }
 
 function viewEmployees() {
@@ -92,11 +65,4 @@ function viewEmployees() {
   });
 }
 
-// call on the function to dispaly main menu
-init();
-function init() {
-  console.log(
-    "Welcome to our employee content management systems!\nStart building your team"
-  );
-  mainMenu();
-}
+module.exports = mainMenu;
