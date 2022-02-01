@@ -66,20 +66,20 @@ function viewDepartments() {
 
 function viewRoles() {
   db.query("SELECT * FROM employee_role", (err, results) => {
-    if (results) {
-      console.table(results);
+    if (err) {
+      console.error(err);
     } else {
-      console.log("Error reading employee role");
+      console.table(results);
     }
   });
 }
 
 function viewEmployees() {
   db.query("SELECT * FROM employee", (err, results) => {
-    if (results) {
-      console.table(results);
+    if (err) {
+      console.error(err);
     } else {
-      console.log("Error reading employee ");
+      console.table(results);
     }
   });
 }
