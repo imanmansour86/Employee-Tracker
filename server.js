@@ -18,6 +18,7 @@ const mainMenuQuestions = [
       "Add a Role",
       "Add an Employee",
       "Update an Employee Role",
+      "Exit",
     ],
   },
 ];
@@ -41,16 +42,44 @@ function mainMenu() {
       case "View all Departments":
         viewDepartments();
         break;
+      case "View all Roles":
+        viewRoles();
+        break;
+      case "View all Employees":
+        viewEmployees();
+        break;
+      case "Exit":
+        console.log("GoodBye");
     }
   });
 }
 
 function viewDepartments() {
-  db.query("SELECT * FROM department", function (err, results) {
+  db.query("SELECT * FROM department", (err, results) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.table(results);
+    }
+  });
+}
+
+function viewRoles() {
+  db.query("SELECT * FROM employee_role", (err, results) => {
     if (results) {
-      results.forEach((department) => {
-        console.log(department);
-      });
+      console.table(results);
+    } else {
+      console.log("Error reading employee role");
+    }
+  });
+}
+
+function viewEmployees() {
+  db.query("SELECT * FROM employee", (err, results) => {
+    if (results) {
+      console.table(results);
+    } else {
+      console.log("Error reading employee ");
     }
   });
 }
