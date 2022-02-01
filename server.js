@@ -71,7 +71,9 @@ function viewDepartments() {
 
 function viewRoles() {
   db.query(
-    "SELECT * FROM employee_role INNER JOIN department ON department.id = employee_role.department_id ",
+    `SELECT employee_role.id,employee_role.title,employee_role.salary, department.department_name 
+      FROM employee_role 
+      INNER JOIN department ON department.id = employee_role.department_id `,
     (err, results) => {
       if (err) {
         console.error(err);
@@ -83,13 +85,16 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-  db.query("SELECT * FROM employee", (err, results) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.table(results);
+  db.query(
+    "SELECT * FROM employee right join employee_role on employee_role.id = employee.role_id",
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.table(results);
+      }
     }
-  });
+  );
 }
 
 // call on the function to dispaly main menu
