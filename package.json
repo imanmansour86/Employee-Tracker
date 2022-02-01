@@ -18,6 +18,7 @@
   "homepage": "https://github.com/imanmansour86/Employee-Tracker#readme",
   "dependencies": {
     "express": "^4.17.2",
-    "inquirer": "^8.2.0"
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.3"
   }
 }
