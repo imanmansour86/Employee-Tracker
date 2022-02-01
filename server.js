@@ -24,7 +24,7 @@ const mainMenuQuestions = [
 // Connect to database
 const db = mysql.createConnection(
   {
-    host: "127.0.0.1",
+    host: "localhost",
     // MySQL username,
     user: "root",
     // MySQL password
