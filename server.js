@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 // Import and require mysql2
 const mysql = require("mysql2");
 const cTable = require("console.table");
+const Connection = require("mysql2/typings/mysql/lib/Connection");
 
 const PORT = process.env.PORT || 3001;
 
@@ -24,7 +25,7 @@ const mainMenuQuestions = [
 ];
 
 // Connect to database
-const db = mysql.createConnection(
+const connection = mysql.createConnection(
   {
     host: "127.0.0.1",
     // MySQL username,
@@ -37,7 +38,7 @@ const db = mysql.createConnection(
 );
 
 //if mysql connection fails
-db.connect(function (err) {
+connection.connect(function (err) {
   if (err) throw err;
 });
 
@@ -54,13 +55,13 @@ function mainMenu() {
         viewEmployees();
         break;
       case "Exit":
-        console.log("GoodBye");
+        exit();
     }
   });
 }
 
 function viewDepartments() {
-  db.query("SELECT * FROM department", (err, results) => {
+  db.query(`SELECT * FROM department`, (err, results) => {
     if (err) {
       console.error(err);
     } else {
@@ -71,7 +72,7 @@ function viewDepartments() {
 
 function viewRoles() {
   db.query(
-    `SELECT employee_role.id,employee_role.title,employee_role.salary, department.department_name 
+    `SELECT employee_role.id,title,salary, department_name 
       FROM employee_role 
       INNER JOIN department ON department.id = employee_role.department_id `,
     (err, results) => {
@@ -86,7 +87,10 @@ function viewRoles() {
 
 function viewEmployees() {
   db.query(
-    "SELECT * FROM employee right join employee_role on employee_role.id = employee.role_id",
+    `SELECT employee.id, first_name, last_name, employee_role.title, department_name, employee_role.salary,  
+     FROM employee 
+     INNER JOIN employee_role ON employee_role.id = employee.role_id
+     INNER JOIN department ON department.id = employee_role.department_id `,
     (err, results) => {
       if (err) {
         console.error(err);
@@ -97,6 +101,10 @@ function viewEmployees() {
   );
 }
 
+function exit() {
+  console.log("Thanks for viewing our System! Goodbye.");
+  connection.end();
+}
 // call on the function to dispaly main menu
 init();
 function init() {
