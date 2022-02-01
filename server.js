@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 // Import and require mysql2
 const mysql = require("mysql2");
+const cTable = require("console.table");
 
 const PORT = process.env.PORT || 3001;
 
@@ -24,7 +25,7 @@ const mainMenuQuestions = [
 // Connect to database
 const db = mysql.createConnection(
   {
-    host: "localhost",
+    host: "127.0.0.1",
     // MySQL username,
     user: "root",
     // MySQL password
@@ -36,7 +37,21 @@ const db = mysql.createConnection(
 
 function mainMenu() {
   inquirer.prompt(mainMenuQuestions).then((response) => {
-    console.log(response);
+    switch (response.mainMenuOptions) {
+      case "View all Departments":
+        viewDepartments();
+        break;
+    }
+  });
+}
+
+function viewDepartments() {
+  db.query("SELECT * FROM department", function (err, results) {
+    if (results) {
+      results.forEach((department) => {
+        console.log(department);
+      });
+    }
   });
 }
 
