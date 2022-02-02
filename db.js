@@ -22,9 +22,7 @@ connection.connect(function (err) {
   if (err) throw err;
 });
 
-function endConnection() {
-  connection.end();
-}
+const endConnection = () => connection.end();
 
 function viewDepartments() {
   db.query(`SELECT * FROM department`, (err, results) => {
@@ -36,7 +34,7 @@ function viewDepartments() {
   });
 }
 
-function viewRoles() {
+const viewRoles = () => {
   db.query(
     `SELECT employee_role.id,title,salary, department_name 
       FROM employee_role 
@@ -49,7 +47,7 @@ function viewRoles() {
       }
     }
   );
-}
+};
 
 function viewEmployees() {
   db.query(
