@@ -16,4 +16,5 @@ VALUES ("Mike", "Morl" ,1,1),
  ("Jo", "Okwa", 2,2),
   ("Stephanie", "Howk", 3,3),
  ("Tasneem", "Gupta",4,3),
+ ("Tom", "Lee",4,NULL),
  ("Sara", "Dar",5,5);

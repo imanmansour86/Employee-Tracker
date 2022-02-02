@@ -24,6 +24,7 @@ connection.connect(function (err) {
 
 const endConnection = () => connection.end();
 
+//view all departments
 function viewDepartments() {
   connection.query(`SELECT * FROM department`, (err, results) => {
     if (err) {
@@ -34,6 +35,7 @@ function viewDepartments() {
   });
 }
 
+//view all roles
 const viewRoles = () => {
   connection.query(
     `SELECT employee_role.id,title, department_name AS department, salary
@@ -50,12 +52,13 @@ const viewRoles = () => {
   );
 };
 
+//view all employees-left join on employee table to get manager info also to include null managers
 const viewEmployees = () => {
   connection.query(
     `SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department_name AS department, employee_role.salary, CONCAT(manager.first_name, ' ', manager.last_name) as manager 
      FROM employee 
      INNER JOIN employee_role ON employee_role.id = employee.role_id
-     LEFT JOIN employee AS manager ON employee.manager_id = manager.id
+     LEFT JOIN employee AS manager ON employee.manager_id = manager.id 
      INNER JOIN department ON department.id = employee_role.department_id `,
     (err, results) => {
       if (err) {
@@ -67,4 +70,26 @@ const viewEmployees = () => {
   );
 };
 
-module.exports = { viewRoles, viewDepartments, viewEmployees, endConnection };
+//add a department
+const addDepartment = (name) => {
+  connection.query(
+    `INSERT INTO department (department_name) VALUES(?) `,
+    name,
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Added ${name} to the databases`);
+        console.table(results);
+      }
+    }
+  );
+};
+
+module.exports = {
+  viewRoles,
+  viewDepartments,
+  viewEmployees,
+  addDepartment,
+  endConnection,
+};
