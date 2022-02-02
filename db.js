@@ -25,7 +25,7 @@ connection.connect(function (err) {
 const endConnection = () => connection.end();
 
 function viewDepartments() {
-  db.query(`SELECT * FROM department`, (err, results) => {
+  connection.query(`SELECT * FROM department`, (err, results) => {
     if (err) {
       console.error(err);
     } else {
@@ -35,10 +35,11 @@ function viewDepartments() {
 }
 
 const viewRoles = () => {
-  db.query(
-    `SELECT employee_role.id,title,salary, department_name 
+  connection.query(
+    `SELECT employee_role.id,title, department_name AS department, salary
       FROM employee_role 
-      INNER JOIN department ON department.id = employee_role.department_id `,
+      INNER JOIN department ON department.id = employee_role.department_id 
+      ORDER BY employee_role.id`,
     (err, results) => {
       if (err) {
         console.error(err);
@@ -49,11 +50,12 @@ const viewRoles = () => {
   );
 };
 
-function viewEmployees() {
-  db.query(
-    `SELECT employee.id, first_name, last_name, employee_role.title, department_name, employee_role.salary,  
+const viewEmployees = () => {
+  connection.query(
+    `SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department_name AS department, employee_role.salary, CONCAT(manager.first_name, ' ', manager.last_name) as manager 
      FROM employee 
      INNER JOIN employee_role ON employee_role.id = employee.role_id
+     LEFT JOIN employee AS manager ON employee.manager_id = manager.id
      INNER JOIN department ON department.id = employee_role.department_id `,
     (err, results) => {
       if (err) {
@@ -63,6 +65,6 @@ function viewEmployees() {
       }
     }
   );
-}
+};
 
 module.exports = { viewRoles, viewDepartments, viewEmployees, endConnection };
