@@ -83,9 +83,9 @@ const addEmployeeQuestions = [
 const handleAddDepartment = () => {
   inquirer.prompt(addDepartmentQuestions).then((response) => {
     console.log("after prompot", response.department);
-    db.addDepartment(response.department);
-    console.log("test here");
-    mainMenu();
+    db.addDepartment(response.department).then(() => {
+      mainMenu();
+    });
   });
 };
 
@@ -96,13 +96,15 @@ const handleAddRole = () => {
     addEmployeeQuestions[2].choices.push(role);
 
     console.log("results", role, salary, department);
-    db.addRole(role, salary, department);
+    db.addRole(role, salary, department).then(() => {
+      mainMenu();
+    });
   });
 };
 
 const handleViewDepartment = () => {
   db.viewDepartments()
-    .then((results) => {
+    .then(([results, fields]) => {
       console.log("\n");
       var departmentsList = [];
       for (i = 0; i < results.length; i++) {
@@ -135,10 +137,28 @@ const handleViewRoles = () => {
     });
 };
 
+const handleViewEmployees = () => {
+  db.viewEmployees()
+    .then(([results, fields]) => {
+      console.log("\n");
+
+      console.table(results);
+
+      mainMenu();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
 const handleAddEmployee = () => {
   inquirer.prompt(addEmployeeQuestions).then((response) => {
     const { firstName, lastName, employeeRole, employeeManager } = response;
-    db.addEmployee(firstName, lastName, employeeRole, employeeManager);
+    db.addEmployee(firstName, lastName, employeeRole, employeeManager).then(
+      () => {
+        mainMenu();
+      }
+    );
   });
 };
 
@@ -152,7 +172,7 @@ function mainMenu() {
         handleViewRoles();
         break;
       case "View all Employees":
-        db.viewEmployees();
+        handleViewEmployees();
         break;
       case "Add a Department":
         handleAddDepartment();
@@ -192,7 +212,7 @@ const readAllRole = () => {
 //read all departments from db
 const readAllDepts = () => {
   db.viewDepartments()
-    .then((results) => {
+    .then(([results, fields]) => {
       var departments = [];
       for (i = 0; i < results.length; i++) {
         departments.push(results[i].department_name);
@@ -203,6 +223,7 @@ const readAllDepts = () => {
       console.error(err);
     });
 };
+
 // call on the function to dispaly main menu
 init();
 function init() {

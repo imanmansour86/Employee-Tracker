@@ -25,17 +25,8 @@ connection.connect(function (err) {
 
 const endConnection = () => connection.end();
 
-const viewDepartments = () => {
-  return new Promise(function (resolve, reject) {
-    connection.query(`SELECT * FROM department`, (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
-  });
-};
+const viewDepartments = () =>
+  connection.promise().query(`SELECT * FROM department`);
 
 //view all roles
 const viewRoles = () =>
@@ -47,101 +38,69 @@ const viewRoles = () =>
   );
 
 //view all employees-left join on employee table to get manager info also to include null managers
-const viewEmployees = () => {
-  connection.query(
+const viewEmployees = () =>
+  connection.promise().query(
     `SELECT employee.id, employee.first_name, employee.last_name, employee_role.title, department_name AS department, employee_role.salary, CONCAT(manager.first_name, ' ', manager.last_name) as manager 
      FROM employee 
      INNER JOIN employee_role ON employee_role.id = employee.role_id
      LEFT JOIN employee AS manager ON employee.manager_id = manager.id 
-     INNER JOIN department ON department.id = employee_role.department_id `,
-    (err, results) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.table(results);
-      }
-    }
+     INNER JOIN department ON department.id = employee_role.department_id `
   );
-};
 
 //add a department
-const addDepartment = (name) => {
-  connection.query(
-    `INSERT INTO department (department_name) VALUES(?) `,
-    name,
-    (err, results) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(`Added ${name} to the databases`);
-        console.table(results);
-      }
-    }
-  );
-};
+const addDepartment = (name) =>
+  connection
+    .promise()
+    .query(`INSERT INTO department (department_name) VALUES(?) `, name);
 
-const addRole = (role, salary, department) => {
+const addRole = (role, salary, department) =>
   //get the department id from the department the user chose
-  connection.query(
-    `SELECT department.id FROM department
+  connection
+    .promise()
+    .query(
+      `SELECT department.id FROM department
     WHERE department_name=?`,
-    department,
-    (err, deptID) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(deptID[0].id); //get the id from the returned object
-
-        //query to add a new employee
-        connection.query(
+      department
+    )
+    .then(([deptID, fields]) =>
+      //query to add a new employee
+      connection
+        .promise()
+        .query(
           `INSERT INTO employee_role(title, salary,department_id) VALUES (?,?,?)`,
-          [role, salary, deptID[0].id],
-          (err, results) => {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log(`Added ${role} to the databases`);
-              console.table(results);
-            }
-          }
-        );
-      }
-    }
-  );
-};
+          [role, salary, deptID[0].id]
+        )
+    );
+
 //add new employee
 const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
   //get the employee id from the
-  connection.query(
-    `SELECT employee_role.id FROM employee_role
-
-    WHERE employee_role.title = ?`,
-    employeeRole,
-    (err, results) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("add employee results", results);
-        console.log(`Added ${firstName} ${lastName} to the databases`);
-        console.table(results);
-
-        connection.query(
-          `SELECT employee.manager_id from employee
-        WHERE CONCAT(employee.first_name, ' ' , employee.last_name) = ?`,
-          employeeManager,
-          (err, results) => {
-            if (err) {
-              console.error(err);
-            } else {
-              console.table(results);
-            }
-          }
-        );
-      }
-    }
-  );
+  var roleResults;
+  return connection
+    .promise()
+    .query(
+      `SELECT employee_role.id FROM employee_role
+       WHERE employee_role.title = ?`,
+      employeeRole
+    )
+    .then(([results, fields]) => {
+      roleResults = results;
+      return connection.promise().query(
+        ` SELECT employee.manager_id from employee
+          WHERE CONCAT(employee.first_name, ' ' , employee.last_name) = ?`,
+        employeeManager
+      );
+    })
+    .then(([managerResults, fields]) => {
+      console.log(roleResults);
+      console.log(managerResults);
+      return connection.promise().query(
+        ` INSERT INTO employee (first_name,last_name, role_id,manager_id)
+        VALUES (?, ?, ? , ?)`,
+        [firstName, lastName, roleResults[0].id, managerResults[0].manager_id]
+      );
+    });
 };
-
 module.exports = {
   viewRoles,
   viewDepartments,
