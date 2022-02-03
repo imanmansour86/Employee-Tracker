@@ -92,8 +92,6 @@ const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
       );
     })
     .then(([managerResults, fields]) => {
-      console.log(roleResults);
-      console.log(managerResults);
       return connection.promise().query(
         ` INSERT INTO employee (first_name,last_name, role_id,manager_id)
         VALUES (?, ?, ? , ?)`,
@@ -101,6 +99,17 @@ const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
       );
     });
 };
+
+const updateEmployee = (employeeName, roleList) => {
+  connection.promise().query(
+    ` UPDATE employee_role SET employee_role.title = ?
+ INNER JOIN employee on employee.role_id = employee_role.id
+    WHERE CONCAT(employee.first_name, ' ' , employee.last_name) = ?
+    `,
+    [roleList, employeeName]
+  );
+};
+
 module.exports = {
   viewRoles,
   viewDepartments,
@@ -108,5 +117,6 @@ module.exports = {
   addDepartment,
   addRole,
   addEmployee,
+  updateEmployee,
   endConnection,
 };

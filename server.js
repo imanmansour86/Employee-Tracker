@@ -74,7 +74,7 @@ const addEmployeeQuestions = [
       "Stephanie Howk",
       "Tasneem Gupta",
       "Tom Lee",
-      " Sara Dar",
+      "Sara Dar",
     ],
   },
 ];
@@ -97,7 +97,8 @@ const updateEmployeeQuestions = [
 //collect departmnet name from user then call db addDepartment to add the dept to db
 const handleAddDepartment = () => {
   inquirer.prompt(addDepartmentQuestions).then((response) => {
-    console.log("after prompot", response.department);
+    console.log(`Added ${response.department} to department list`);
+    console.log("\n");
     db.addDepartment(response.department).then(() => {
       mainMenu();
     });
@@ -109,8 +110,9 @@ const handleAddRole = () => {
     const { role, salary, department } = response;
 
     addEmployeeQuestions[2].choices.push(role);
+    console.log(`Added ${role} to role list`);
+    console.log("\n");
 
-    console.log("results", role, salary, department);
     db.addRole(role, salary, department).then(() => {
       mainMenu();
     });
@@ -126,7 +128,7 @@ const handleViewDepartment = () => {
         departmentsList.push(results[i].department_name);
       }
       console.table(results);
-      console.log("department list here is", departmentsList);
+
       mainMenu();
     })
     .catch((err) => {
@@ -138,7 +140,7 @@ const handleViewRoles = () => {
   db.viewRoles()
     .then(([results, fields]) => {
       console.log("\n");
-      console.log("role results here", results);
+
       var roles = [];
       for (i = 0; i < results.length; i++) {
         roles.push(results[i].title);
@@ -169,6 +171,8 @@ const handleViewEmployees = () => {
 const handleAddEmployee = () => {
   inquirer.prompt(addEmployeeQuestions).then((response) => {
     const { firstName, lastName, employeeRole, employeeManager } = response;
+    console.log(`Added ${firstName} ${lastName} to Employee list`);
+    console.log("\n");
     db.addEmployee(firstName, lastName, employeeRole, employeeManager).then(
       () => {
         mainMenu();
@@ -180,8 +184,9 @@ const handleAddEmployee = () => {
 const handleUpdateEmployee = () => {
   inquirer.prompt(updateEmployeeQuestions).then((response) => {
     const { employeeName, roleList } = response;
-    console.log("update here,", employeeName, roleLis);
+    console.log("update here,", employeeName, roleList);
     db.updateEmployee(employeeName, roleList).then(() => {
+      console.log("123");
       mainMenu();
     });
   });
@@ -262,7 +267,6 @@ const readAllEmployees = () => {
         employees.push(results[i].first_name + " " + results[i].last_name);
       }
 
-      console.log("all employees", employees);
       updateEmployeeQuestions[0].choices = employees;
     })
     .catch((err) => {
@@ -274,8 +278,9 @@ const readAllEmployees = () => {
 init();
 function init() {
   console.log(
-    "Welcome to our employee content management systems!\nStart building your team"
+    "Welcome to our Employee content Management systems!\nStart building your team"
   );
+  console.log("\n");
   readAllRole();
   readAllDepts();
   readAllEmployees();
