@@ -13,7 +13,7 @@ const mainMenuQuestions = [
       "Add a Department",
       "Add a Role",
       "Add an Employee",
-      "Update an Employee Role",
+      "Update Employee Role",
       "Exit",
     ],
   },
@@ -76,6 +76,21 @@ const addEmployeeQuestions = [
       "Tom Lee",
       " Sara Dar",
     ],
+  },
+];
+
+const updateEmployeeQuestions = [
+  {
+    type: "list",
+    message: "Which employee's role you want to update?",
+    name: "employeeName",
+    choice: [],
+  },
+  {
+    type: "list",
+    message: "Which new role you want to assign the employee?",
+    name: "roleList",
+    choice: [],
   },
 ];
 
@@ -162,6 +177,16 @@ const handleAddEmployee = () => {
   });
 };
 
+const handleUpdateEmployee = () => {
+  inquirer.prompt(updateEmployeeQuestions).then((response) => {
+    const { employeeName, roleList } = response;
+    console.log("update here,", employeeName, roleLis);
+    db.updateEmployee(employeeName, roleList).then(() => {
+      mainMenu();
+    });
+  });
+};
+
 function mainMenu() {
   inquirer.prompt(mainMenuQuestions).then((response) => {
     switch (response.mainMenuOptions) {
@@ -183,6 +208,9 @@ function mainMenu() {
       case "Add an Employee":
         handleAddEmployee();
         break;
+      case "Update Employee Role":
+        handleUpdateEmployee();
+        break;
       case "Exit":
         exit();
     }
@@ -203,6 +231,7 @@ const readAllRole = () => {
         roles.push(results[i].title);
       }
       addEmployeeQuestions[2].choices = roles;
+      updateEmployeeQuestions[1].choices = roles;
     })
     .catch((err) => {
       console.error(err);
@@ -224,6 +253,23 @@ const readAllDepts = () => {
     });
 };
 
+const readAllEmployees = () => {
+  db.viewEmployees()
+    .then(([results, fields]) => {
+      var employees = [];
+
+      for (i = 0; i < results.length; i++) {
+        employees.push(results[i].first_name + " " + results[i].last_name);
+      }
+
+      console.log("all employees", employees);
+      updateEmployeeQuestions[0].choices = employees;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
 // call on the function to dispaly main menu
 init();
 function init() {
@@ -232,5 +278,6 @@ function init() {
   );
   readAllRole();
   readAllDepts();
+  readAllEmployees();
   mainMenu();
 }

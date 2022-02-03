@@ -54,7 +54,7 @@ const addDepartment = (name) =>
     .query(`INSERT INTO department (department_name) VALUES(?) `, name);
 
 const addRole = (role, salary, department) =>
-  //get the department id from the department the user chose
+  //get the department id from the department the user choice
   connection
     .promise()
     .query(
