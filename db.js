@@ -38,24 +38,13 @@ const viewDepartments = () => {
 };
 
 //view all roles
-const viewRoles = () => {
-  return new Promise(function (resolve, reject) {
-    connection.query(
-      `SELECT employee_role.id,title, department_name AS department, salary
+const viewRoles = () =>
+  connection.promise().query(
+    `SELECT employee_role.id,title, department_name AS department, salary
       FROM employee_role 
       INNER JOIN department ON department.id = employee_role.department_id 
-      ORDER BY employee_role.id`,
-      (err, results) => {
-        if (err) {
-          reject(err);
-          console.error(err);
-        } else {
-          resolve(results);
-        }
-      }
-    );
-  });
-};
+      ORDER BY employee_role.id`
+  );
 
 //view all employees-left join on employee table to get manager info also to include null managers
 const viewEmployees = () => {

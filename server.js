@@ -92,6 +92,9 @@ const handleAddDepartment = () => {
 const handleAddRole = () => {
   inquirer.prompt(addRoleQuestions).then((response) => {
     const { role, salary, department } = response;
+
+    addEmployeeQuestions[2].choices.push(role);
+
     console.log("results", role, salary, department);
     db.addRole(role, salary, department);
   });
@@ -116,7 +119,7 @@ const handleViewDepartment = () => {
 
 const handleViewRoles = () => {
   db.viewRoles()
-    .then((results) => {
+    .then(([results, fields]) => {
       console.log("\n");
       console.log("role results here", results);
       var roles = [];
@@ -174,7 +177,7 @@ const exit = () => {
 // reads all roles from db
 const readAllRole = () => {
   db.viewRoles()
-    .then((results) => {
+    .then(([results, fields]) => {
       var roles = [];
       for (i = 0; i < results.length; i++) {
         roles.push(results[i].title);
