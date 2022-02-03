@@ -67,6 +67,7 @@ const handleAddRole = () => {
 const handleViewDepartment = () => {
   db.viewDepartments()
     .then((results) => {
+      console.log("\n");
       console.table(results);
       mainMenu();
     })

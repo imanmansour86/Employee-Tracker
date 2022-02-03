@@ -25,7 +25,7 @@ connection.connect(function (err) {
 
 const endConnection = () => connection.end();
 
-// ZZZZZ
+//
 
 // function viewDepartments() {
 //   return new Promise(function (resolve, reject) {
@@ -39,7 +39,7 @@ const endConnection = () => connection.end();
 //   });
 // }
 
-function viewDepartments() {
+const viewDepartments = () => {
   return new Promise(function (resolve, reject) {
     connection.query(`SELECT * FROM department`, (err, results) => {
       if (err) {
@@ -49,7 +49,7 @@ function viewDepartments() {
       }
     });
   });
-}
+};
 
 //   })
 //   connection
@@ -114,20 +114,34 @@ const addDepartment = (name) => {
 };
 
 const addRole = (role, salary, department) => {
+  //get the department id from the department the user chose
   connection.query(
-    `INSERT INTO employee_role(title, salary) VALUES (?,?,?)`,
-    [role, salary, department],
-    (err, results) => {
+    `SELECT department.id FROM department
+    WHERE department_name=?`,
+    department,
+    (err, deptID) => {
       if (err) {
         console.error(err);
       } else {
-        console.log(`Added ${role} to the databases`);
-        console.table(results);
+        console.log(deptID[0].id); //get the id from the returned object
+
+        //query to add a new employee
+        connection.query(
+          `INSERT INTO employee_role(title, salary,department_id) VALUES (?,?,?)`,
+          [role, salary, deptID[0].id],
+          (err, results) => {
+            if (err) {
+              console.error(err);
+            } else {
+              console.log(`Added ${role} to the databases`);
+              console.table(results);
+            }
+          }
+        );
       }
     }
   );
 };
-
 module.exports = {
   viewRoles,
   viewDepartments,
