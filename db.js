@@ -142,11 +142,45 @@ const addRole = (role, salary, department) => {
     }
   );
 };
+//add new employee
+const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
+  //get the employee id from the
+  connection.query(
+    `SELECT employee_role.id FROM employee_role
+
+    WHERE employee_role.title = ?`,
+    employeeRole,
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("add employee results", results);
+        console.log(`Added ${firstName} ${lastName} to the databases`);
+        console.table(results);
+
+        connection.query(
+          `SELECT employee.manager_id from employee
+        WHERE manager.first_name + ' ' + manager.last_name = ?`,
+          employeeManager,
+          (err, results) => {
+            if (err) {
+              console.error(err);
+            } else {
+              console.table(results);
+            }
+          }
+        );
+      }
+    }
+  );
+};
+
 module.exports = {
   viewRoles,
   viewDepartments,
   viewEmployees,
   addDepartment,
   addRole,
+  addEmployee,
   endConnection,
 };

@@ -1,5 +1,7 @@
 const inquirer = require("inquirer");
 const db = require("./db");
+// array to hold all departments
+var departmentsList = [];
 
 const mainMenuQuestions = [
   {
@@ -42,7 +44,47 @@ const addRoleQuestions = [
     type: "list",
     message: "Which department does the role belong to?",
     name: "department",
-    choices: ["Software", "HR", "Finanace", "Sales", "Legal"],
+    choices: departmentsList,
+  },
+];
+
+const addEmployeeQuestions = [
+  {
+    type: "input",
+    message: "What is the employee's first name?",
+    name: "firstName",
+  },
+  {
+    type: "input",
+    message: "What is the employee's last name?",
+    name: "lastName",
+  },
+  {
+    type: "list",
+    message: "What is the employee's role?",
+    name: "employeeRole",
+    choices: [
+      "Software Engineer",
+      "Account Manager",
+      "Salesperson",
+      "Sales Lead",
+      "Lawyer",
+      "HR Manager",
+    ],
+  },
+  {
+    type: "list",
+    message: "Who is the employee's manager?",
+    name: "employeeManager",
+    choices: [
+      "Mike Morl",
+      "Paul Berni",
+      "Jo Okwa",
+      "Stephanie Howk",
+      "Tasneem Gupta",
+      "Tom Lee",
+      " Sara Dar",
+    ],
   },
 ];
 
@@ -68,12 +110,23 @@ const handleViewDepartment = () => {
   db.viewDepartments()
     .then((results) => {
       console.log("\n");
+      for (i = 0; i < results.length; i++) {
+        departmentsList.push(results[i].department_name);
+      }
       console.table(results);
+      console.log("department list here is", departmentsList);
       mainMenu();
     })
     .catch((err) => {
       console.error(err);
     });
+};
+
+const handleAddEmployee = () => {
+  inquirer.prompt(addEmployeeQuestions).then((response) => {
+    const { firstName, lastName, employeeRole, employeeManager } = response;
+    db.addEmployee(firstName, lastName, employeeRole, employeeManager);
+  });
 };
 
 function mainMenu() {
@@ -94,6 +147,9 @@ function mainMenu() {
         break;
       case "Add a Role":
         handleAddRole();
+        break;
+      case "Add an Employee":
+        handleAddEmployee();
         break;
       case "Exit":
         exit();
