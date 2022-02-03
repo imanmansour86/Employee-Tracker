@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 
 //print the sql tables in a formatted way in terminal
 const cTable = require("console.table");
+const { response } = require("express");
 
 // Connect to mysql database using local server
 var connection = mysql.createConnection(
@@ -24,16 +25,42 @@ connection.connect(function (err) {
 
 const endConnection = () => connection.end();
 
-//view all departments
+// ZZZZZ
+
+// function viewDepartments() {
+//   return new Promise(function (resolve, reject) {
+//     connection.query(`SELECT * FROM department`, (err, results) => {
+//       if (err) {
+//         console.error(err);
+//       } else {
+//         console.table(results);
+//       }
+//     });
+//   });
+// }
+
 function viewDepartments() {
-  connection.query(`SELECT * FROM department`, (err, results) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.table(results);
-    }
+  return new Promise(function (resolve, reject) {
+    connection.query(`SELECT * FROM department`, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
   });
 }
+
+//   })
+//   connection
+//     .promise()
+//     .query(`SELECT * FROM department`)
+//     .then(([rows, fields]) => {
+//       console.table(rows);
+//     })
+//     .catch(console.log)
+//     .then(() => connection.end());
+// }
 
 //view all roles
 const viewRoles = () => {
@@ -86,10 +113,26 @@ const addDepartment = (name) => {
   );
 };
 
+const addRole = (role, salary, department) => {
+  connection.query(
+    `INSERT INTO employee_role(title, salary) VALUES (?,?,?)`,
+    [role, salary, department],
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(`Added ${role} to the databases`);
+        console.table(results);
+      }
+    }
+  );
+};
+
 module.exports = {
   viewRoles,
   viewDepartments,
   viewEmployees,
   addDepartment,
+  addRole,
   endConnection,
 };
