@@ -25,20 +25,6 @@ connection.connect(function (err) {
 
 const endConnection = () => connection.end();
 
-//
-
-// function viewDepartments() {
-//   return new Promise(function (resolve, reject) {
-//     connection.query(`SELECT * FROM department`, (err, results) => {
-//       if (err) {
-//         console.error(err);
-//       } else {
-//         console.table(results);
-//       }
-//     });
-//   });
-// }
-
 const viewDepartments = () => {
   return new Promise(function (resolve, reject) {
     connection.query(`SELECT * FROM department`, (err, results) => {
@@ -51,32 +37,24 @@ const viewDepartments = () => {
   });
 };
 
-//   })
-//   connection
-//     .promise()
-//     .query(`SELECT * FROM department`)
-//     .then(([rows, fields]) => {
-//       console.table(rows);
-//     })
-//     .catch(console.log)
-//     .then(() => connection.end());
-// }
-
 //view all roles
 const viewRoles = () => {
-  connection.query(
-    `SELECT employee_role.id,title, department_name AS department, salary
+  return new Promise(function (resolve, reject) {
+    connection.query(
+      `SELECT employee_role.id,title, department_name AS department, salary
       FROM employee_role 
       INNER JOIN department ON department.id = employee_role.department_id 
       ORDER BY employee_role.id`,
-    (err, results) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.table(results);
+      (err, results) => {
+        if (err) {
+          reject(err);
+          console.error(err);
+        } else {
+          resolve(results);
+        }
       }
-    }
-  );
+    );
+  });
 };
 
 //view all employees-left join on employee table to get manager info also to include null managers
@@ -160,7 +138,7 @@ const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
 
         connection.query(
           `SELECT employee.manager_id from employee
-        WHERE manager.first_name + ' ' + manager.last_name = ?`,
+        WHERE CONCAT(employee.first_name, ' ' , employee.last_name) = ?`,
           employeeManager,
           (err, results) => {
             if (err) {

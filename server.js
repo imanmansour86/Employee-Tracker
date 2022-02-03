@@ -1,7 +1,5 @@
 const inquirer = require("inquirer");
 const db = require("./db");
-// array to hold all departments
-var departmentsList = [];
 
 const mainMenuQuestions = [
   {
@@ -44,7 +42,7 @@ const addRoleQuestions = [
     type: "list",
     message: "Which department does the role belong to?",
     name: "department",
-    choices: departmentsList,
+    choices: [],
   },
 ];
 
@@ -63,14 +61,7 @@ const addEmployeeQuestions = [
     type: "list",
     message: "What is the employee's role?",
     name: "employeeRole",
-    choices: [
-      "Software Engineer",
-      "Account Manager",
-      "Salesperson",
-      "Sales Lead",
-      "Lawyer",
-      "HR Manager",
-    ],
+    choices: [],
   },
   {
     type: "list",
@@ -110,11 +101,30 @@ const handleViewDepartment = () => {
   db.viewDepartments()
     .then((results) => {
       console.log("\n");
+      var departmentsList = [];
       for (i = 0; i < results.length; i++) {
         departmentsList.push(results[i].department_name);
       }
       console.table(results);
       console.log("department list here is", departmentsList);
+      mainMenu();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
+const handleViewRoles = () => {
+  db.viewRoles()
+    .then((results) => {
+      console.log("\n");
+      console.log("role results here", results);
+      var roles = [];
+      for (i = 0; i < results.length; i++) {
+        roles.push(results[i].title);
+      }
+      console.table(results);
+
       mainMenu();
     })
     .catch((err) => {
@@ -136,8 +146,7 @@ function mainMenu() {
         handleViewDepartment();
         break;
       case "View all Roles":
-        db.viewRoles();
-        mainMenu();
+        handleViewRoles();
         break;
       case "View all Employees":
         db.viewEmployees();
@@ -161,11 +170,43 @@ const exit = () => {
   console.log("Thanks for viewing our System! Goodbye.");
   db.endConnection();
 };
+
+// reads all roles from db
+const readAllRole = () => {
+  db.viewRoles()
+    .then((results) => {
+      var roles = [];
+      for (i = 0; i < results.length; i++) {
+        roles.push(results[i].title);
+      }
+      addEmployeeQuestions[2].choices = roles;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
+//read all departments from db
+const readAllDepts = () => {
+  db.viewDepartments()
+    .then((results) => {
+      var departments = [];
+      for (i = 0; i < results.length; i++) {
+        departments.push(results[i].department_name);
+      }
+      addRoleQuestions[2].choices = departments;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
 // call on the function to dispaly main menu
 init();
 function init() {
   console.log(
     "Welcome to our employee content management systems!\nStart building your team"
   );
+  readAllRole();
+  readAllDepts();
   mainMenu();
 }
