@@ -100,15 +100,12 @@ const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
     });
 };
 
-const updateEmployee = (employeeName, roleList) => {
+const updateEmployee = (employeeId, roleId) =>
   connection.promise().query(
-    ` UPDATE employee_role SET employee_role.title = ?
- INNER JOIN employee on employee.role_id = employee_role.id
-    WHERE CONCAT(employee.first_name, ' ' , employee.last_name) = ?
-    `,
-    [roleList, employeeName]
+    ` UPDATE employee SET employee.role_id = ? 
+    WHERE employee.id = ?`,
+    [roleId, employeeId]
   );
-};
 
 module.exports = {
   viewRoles,

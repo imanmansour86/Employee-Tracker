@@ -26,7 +26,7 @@ This application is a command-line application that manages a company's employee
 
 ## Installation
 
-- Go to the app's [repo](https://github.com/imanmansour86/team-profile-generator) in github and clone the app
+- Go to the app's [repo](https://github.com/imanmansour86/Employee-Tracker) in github and clone the app
 - From terminal: navigate to app's directoty and run:
 
   ```md
@@ -56,11 +56,19 @@ This application is a command-line application that manages a company's employee
 
 Screenshot of questions prompt in command line:
 
-![command-line](/images/questions.png)
+![questions](./images/allquestions.png)
 
-Screenshot of collected response:
+Screenshot of view all departments response:
 
-![response](/images/response.png)
+![depts](./images/viewdept.png)
+
+Screenshot of view all roles response:
+
+![roles](./images/viewrole.png)
+
+Screenshot of view all employees response:
+
+![employees](./images/viewemployees.png)
 
 ## Demo
 
@@ -68,7 +76,7 @@ Screenshot of collected response:
 
 ## Features
 
-When the application starts, the user is presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role. When choosing to view all departments, roles or employess, a formatted table appears with the results.
+When the application starts, the user is presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role. When choosing to view all departments, roles or employess, a formatted table appears with the results. The user can add a department by name or add a role and the entered department or role are added to the database. The user can choose to update an employee's role based on role title and this information is updated in the database as well.
 
 ## Built With
 

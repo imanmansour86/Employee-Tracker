@@ -166,7 +166,16 @@ const handleAddEmployee = () => {
     console.log(`Added ${firstName} ${lastName} to Employee list`);
     console.log("\n");
     db.addEmployee(firstName, lastName, employeeRole, employeeManager).then(
-      () => {
+      ([results, fields]) => {
+        //update all choices array + update employess array
+        updateEmployeeQuestions[0].choices.push(firstName + " " + lastName);
+        addEmployeeQuestions[3].choices.push(firstName + " " + lastName);
+        employees.push({
+          id: results.insertId,
+          first_name: firstName,
+          last_name: lastName,
+        });
+
         mainMenu();
       }
     );
@@ -176,8 +185,24 @@ const handleAddEmployee = () => {
 const handleUpdateEmployee = () => {
   inquirer.prompt(updateEmployeeQuestions).then((response) => {
     const { employeeName, roleList } = response;
-    console.log("update here,", employeeName, roleList);
-    db.updateEmployee(employeeName, roleList).then(() => {
+
+    var employeeId;
+
+    for (i = 0; i < employees.length; i++) {
+      if (
+        employees[i].first_name + " " + employees[i].last_name ===
+        employeeName
+      )
+        employeeId = employees[i].id;
+    }
+    console.log("employeeId", employeeId);
+    var roleId;
+
+    for (i = 0; i < roles.length; i++) {
+      if (roles[i].title === roleList) roleId = roles[i].id;
+    }
+
+    db.updateEmployee(employeeId, roleId).then(() => {
       console.log(`Updated ${employeeName} to new role ${roleList}`);
       mainMenu();
     });
@@ -219,16 +244,19 @@ const exit = () => {
   db.endConnection();
 };
 
+var roles = [];
 // reads all roles from db
 const readAllRole = () => {
   db.viewRoles()
     .then(([results, fields]) => {
-      var roles = [];
+      var roleNames = [];
+      roles = [];
       for (i = 0; i < results.length; i++) {
-        roles.push(results[i].title);
+        roleNames.push(results[i].title);
+        roles.push(results[i]);
       }
-      addEmployeeQuestions[2].choices = roles;
-      updateEmployeeQuestions[1].choices = roles;
+      addEmployeeQuestions[2].choices = roleNames;
+      updateEmployeeQuestions[1].choices = roleNames;
     })
     .catch((err) => {
       console.error(err);
@@ -249,18 +277,19 @@ const readAllDepts = () => {
       console.error(err);
     });
 };
-
+var employees = [];
 const readAllEmployees = () => {
   db.viewEmployees()
     .then(([results, fields]) => {
-      var employees = [];
-
+      var employeesName = [];
+      employees = [];
       for (i = 0; i < results.length; i++) {
-        employees.push(results[i].first_name + " " + results[i].last_name);
+        employeesName.push(results[i].first_name + " " + results[i].last_name);
+        employees.push(results[i]);
       }
 
-      updateEmployeeQuestions[0].choices = employees;
-      addEmployeeQuestions[3].choices = employees;
+      updateEmployeeQuestions[0].choices = employeesName;
+      addEmployeeQuestions[3].choices = employeesName;
     })
     .catch((err) => {
       console.error(err);
