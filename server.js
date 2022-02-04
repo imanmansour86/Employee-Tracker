@@ -67,15 +67,7 @@ const addEmployeeQuestions = [
     type: "list",
     message: "Who is the employee's manager?",
     name: "employeeManager",
-    choices: [
-      "Mike Morl",
-      "Paul Berni",
-      "Jo Okwa",
-      "Stephanie Howk",
-      "Tasneem Gupta",
-      "Tom Lee",
-      "Sara Dar",
-    ],
+    choices: [],
   },
 ];
 
@@ -186,7 +178,7 @@ const handleUpdateEmployee = () => {
     const { employeeName, roleList } = response;
     console.log("update here,", employeeName, roleList);
     db.updateEmployee(employeeName, roleList).then(() => {
-      console.log("123");
+      console.log(`Updated ${employeeName} to new role ${roleList}`);
       mainMenu();
     });
   });
@@ -268,6 +260,7 @@ const readAllEmployees = () => {
       }
 
       updateEmployeeQuestions[0].choices = employees;
+      addEmployeeQuestions[3].choices = employees;
     })
     .catch((err) => {
       console.error(err);
