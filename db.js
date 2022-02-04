@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 
 //print the sql tables in a formatted way in terminal
 const cTable = require("console.table");
+
 const { response } = require("express");
 
 // Connect to mysql database using local server
@@ -28,7 +29,8 @@ const endConnection = () => connection.end();
 const viewDepartments = () =>
   connection.promise().query(`SELECT * FROM department`);
 
-//view all roles
+//all sql queries are promisfied to be able to call the .then() on them when needed
+//view all roles-
 const viewRoles = () =>
   connection.promise().query(
     `SELECT employee_role.id,title, department_name AS department, salary
@@ -74,7 +76,7 @@ const addRole = (role, salary, department) =>
 
 //add new employee
 const addEmployee = (firstName, lastName, employeeRole, employeeManager) => {
-  //get the employee id from the
+  //get the employee id
   var roleResults;
   return connection
     .promise()

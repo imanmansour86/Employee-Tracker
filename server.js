@@ -169,7 +169,6 @@ const handleAddEmployee = () => {
       ([results, fields]) => {
         //update all choices array + update employess array
         updateEmployeeQuestions[0].choices.push(firstName + " " + lastName);
-        addEmployeeQuestions[3].choices.push(firstName + " " + lastName);
         employees.push({
           id: results.insertId,
           first_name: firstName,
@@ -185,7 +184,7 @@ const handleAddEmployee = () => {
 const handleUpdateEmployee = () => {
   inquirer.prompt(updateEmployeeQuestions).then((response) => {
     const { employeeName, roleList } = response;
-
+    //define employeeId variable to pass it to updateEmployee function
     var employeeId;
 
     for (i = 0; i < employees.length; i++) {
@@ -195,7 +194,7 @@ const handleUpdateEmployee = () => {
       )
         employeeId = employees[i].id;
     }
-    console.log("employeeId", employeeId);
+    //define roleId variable to pass it to updateEmployee function
     var roleId;
 
     for (i = 0; i < roles.length; i++) {
@@ -208,7 +207,7 @@ const handleUpdateEmployee = () => {
     });
   });
 };
-
+//ask main menu questions
 function mainMenu() {
   inquirer.prompt(mainMenuQuestions).then((response) => {
     switch (response.mainMenuOptions) {
